@@ -154,7 +154,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
+  m_BackGroundColor: {r: 0.5808823, g: 0.5808823, b: 0.5808823, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -236,4 +236,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellPrefab: {fileID: 1283809778175932, guid: b1b7828b3b2752746ad70cea69c7cbf6, type: 2}
   stack: []
+  grid: []
   cellParent: {fileID: 1795461530}
