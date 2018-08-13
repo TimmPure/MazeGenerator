@@ -11,6 +11,7 @@ public class Cell : MonoBehaviour {
     public Material visitedMat;
     public Material currentMat;
     public Renderer meshRenderer;
+
     public Renderer topWall;
     public Renderer rightWall;
     public Renderer bottomWall;

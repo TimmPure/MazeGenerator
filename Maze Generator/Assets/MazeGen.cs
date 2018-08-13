@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class MazeGen : MonoBehaviour
@@ -24,8 +23,8 @@ public class MazeGen : MonoBehaviour
         SpawnGrid();
 
         currentCell = grid[0];
-        currentCell.IsCurrent(true);
         currentCell.IsVisited(true);
+        currentCell.IsCurrent(true);
 
         timeStamp = Time.time + coolDown;
     }
@@ -42,22 +41,18 @@ public class MazeGen : MonoBehaviour
         if (Top != null && Top != currentCell && !Top.visited)
         {
             neighbours.Add(Top);
-            Debug.Log("Added Top");
         }
         if (Right != null && Right != currentCell && !Right.visited)
         {
             neighbours.Add(Right);
-            Debug.Log("Added Right");
         }
         if (Bottom != null && Bottom != currentCell && !Bottom.visited)
         {
             neighbours.Add(Bottom);
-            Debug.Log("Added Bottom");
         }
         if (Left != null && Left != currentCell && !Left.visited)
         {
             neighbours.Add(Left);
-            Debug.Log("Added Left");
         }
     }
 
@@ -100,7 +95,9 @@ public class MazeGen : MonoBehaviour
             if (neighbours.Count != 0)
             {
                 stack.Add(currentCell);
-                currentCell = neighbours[Random.Range(0, neighbours.Count)];
+                Cell newCell = neighbours[Random.Range(0, neighbours.Count)];
+                RemoveWalls(currentCell, newCell);
+                currentCell = newCell;
                 currentCell.IsCurrent(true);
             } else
             {
@@ -109,6 +106,27 @@ public class MazeGen : MonoBehaviour
                 currentCell.IsCurrent(true);
             }
             timeStamp = Time.time + coolDown;
+        }
+    }
+
+    private void RemoveWalls(Cell c, Cell n)
+    {
+        if (n.x > c.x)
+        {
+            c.rightWall.enabled = false;
+            n.leftWall.enabled = false;
+        } else if (n. x < c.x)
+        {
+            c.leftWall.enabled = false;
+            n.rightWall.enabled = false;
+        } else if (n.y > c.y)
+        {
+            c.topWall.enabled = false;
+            n.bottomWall.enabled = false;
+        } else if(n.y < c.y)
+        {
+            c.bottomWall.enabled = false;
+            n.topWall.enabled = false;
         }
     }
 }
