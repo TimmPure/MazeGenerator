@@ -11,10 +11,14 @@ public class Cell : MonoBehaviour {
     public Material visitedMat;
     public Material currentMat;
     public Renderer meshRenderer;
-	
-    public void IsVisited()
+    public Renderer topWall;
+    public Renderer rightWall;
+    public Renderer bottomWall;
+    public Renderer leftWall;
+
+    public void IsVisited(bool isVisited)
     {
-        visited = true;
+        visited = isVisited;
         meshRenderer.material = visitedMat;
     }
 
