@@ -11,11 +11,6 @@ public class Cell : MonoBehaviour {
     public Material visitedMat;
     public Material currentMat;
     public Renderer meshRenderer;
-
-	// Use this for initialization
-	public void Start () {
-        //meshRenderer = this.GetComponent<Renderer>();
-	}
 	
     public void IsVisited()
     {
@@ -23,14 +18,15 @@ public class Cell : MonoBehaviour {
         meshRenderer.material = visitedMat;
     }
 
-    public void IsCurrent()
+    public void IsCurrent(bool isCurrent)
     {
-        current = true;
-        meshRenderer.material = currentMat;
+        current = isCurrent;
+        if (current)
+        {
+            meshRenderer.material = currentMat;
+        } else if (!current)
+        {
+            meshRenderer.material = visitedMat;
+        }
     }
-
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }
