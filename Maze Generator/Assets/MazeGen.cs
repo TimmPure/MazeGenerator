@@ -10,9 +10,9 @@ public class MazeGen : MonoBehaviour
     public List<GameObject> grid;
     public Transform cellParent;
 
-    public List<Cell> neighbours = new List<Cell>();
+    public List<Cell> neighbours = new List<Cell>(1);
 
-    private Cell currentCell;
+    public Cell currentCell;
     private int height = 20;
     private int width = 20;
 
@@ -20,14 +20,14 @@ public class MazeGen : MonoBehaviour
     {
         stack = new List<GameObject>();
         SpawnGrid();
-        currentCell = grid[0].GetComponent<Cell>();
+        currentCell = grid[25].GetComponent<Cell>();
         currentCell.IsCurrent(true);
-        CheckNeighbours();
     }
 
     void CheckNeighbours()
     {
-
+        neighbours.Clear();
+        Debug.Log("Populating neighbours[] at x=" + currentCell.x + ", y=" + currentCell.y);
         Cell Top = grid[Index(currentCell.x, currentCell.y + 1)].GetComponent<Cell>();
         Cell Right = grid[Index(currentCell.x + 1, currentCell.y)].GetComponent<Cell>();
         Cell Bottom = grid[Index(currentCell.x, currentCell.y - 1)].GetComponent<Cell>();
@@ -69,8 +69,21 @@ public class MazeGen : MonoBehaviour
             for (int j = 0; j < height; j++)
             {
                 GameObject obj = Instantiate(cellPrefab, new Vector3(j, i, 1f), Quaternion.identity, cellParent);
+                obj.GetComponent<Cell>().x = j;
+                obj.GetComponent<Cell>().y = i;
                 grid.Add(obj);
             }
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            CheckNeighbours();
+            currentCell.IsCurrent(false);
+            currentCell = neighbours[Random.Range(0, neighbours.Count)];
+            currentCell.IsCurrent(true);
         }
     }
 

@@ -20,6 +20,7 @@ public class Cell : MonoBehaviour {
 
     public void IsCurrent(bool isCurrent)
     {
+        Debug.Log("Calling IsCurrent on " + x + "," + y);
         current = isCurrent;
         if (current)
         {
@@ -27,6 +28,7 @@ public class Cell : MonoBehaviour {
         } else if (!current)
         {
             meshRenderer.material = visitedMat;
+            visited = true;
         }
     }
 }
