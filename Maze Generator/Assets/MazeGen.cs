@@ -32,7 +32,6 @@ public class MazeGen : MonoBehaviour
     void CheckNeighbours()
     {
         neighbours.Clear();
-        Debug.Log("Populating neighbours[] at x=" + currentCell.x + ", y=" + currentCell.y);
         Cell Top = GetNeighbour(currentCell.x, currentCell.y + 1);
         Cell Right = GetNeighbour(currentCell.x + 1, currentCell.y);
         Cell Bottom = GetNeighbour(currentCell.x, currentCell.y - 1);
