@@ -10,8 +10,10 @@ public class MazeGen : MonoBehaviour
     public Transform cellParent;
     public List<Cell> neighbours = new List<Cell>();
     public Cell currentCell;
+    public GameObject start;
+    public GameObject finish;
     public bool BeAMazin = false;
-    private float coolDown = .02f;
+    private float coolDown = .01f;
 
     private int height = 30;
     private int width = 30;
@@ -82,10 +84,14 @@ public class MazeGen : MonoBehaviour
 
     private void Update()
     {
-        if (!BeAMazin)
+        if (BeAMazin)
         {
-            return;
+            GenerateMaze();
         }
+    }
+
+    private void GenerateMaze()
+    {
         if (timeStamp < Time.time)
         {
             CheckNeighbours();
@@ -107,9 +113,14 @@ public class MazeGen : MonoBehaviour
             timeStamp = Time.time + coolDown;
         }
 
-        if(neighbours.Count == 0 && stack.Count == 0)
+        if (neighbours.Count == 0 && stack.Count == 0)
         {
+            //TODO: refactor into SpawnStartAndFinish()
             BeAMazin = false;
+            start.SetActive(true);
+            finish.SetActive(true);
+            GetNeighbour(0, 0).leftWall.enabled = false;
+            GetNeighbour(width - 1, height - 1).rightWall.enabled = false;
         }
     }
 
@@ -119,7 +130,7 @@ public class MazeGen : MonoBehaviour
         {
             c.rightWall.enabled = false;
             n.leftWall.enabled = false;
-        } else if (n. x < c.x)
+        } else if (n.x < c.x)
         {
             c.leftWall.enabled = false;
             n.rightWall.enabled = false;
@@ -127,7 +138,7 @@ public class MazeGen : MonoBehaviour
         {
             c.topWall.enabled = false;
             n.bottomWall.enabled = false;
-        } else if(n.y < c.y)
+        } else if (n.y < c.y)
         {
             c.bottomWall.enabled = false;
             n.topWall.enabled = false;

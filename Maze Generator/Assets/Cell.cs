@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Cell : MonoBehaviour {
@@ -8,6 +7,8 @@ public class Cell : MonoBehaviour {
     public int y;
     public bool visited = false;
     public bool current = false;
+    public bool startCell = false;
+    public bool targetCell = false;
     public Material visitedMat;
     public Material currentMat;
     public Renderer meshRenderer;
