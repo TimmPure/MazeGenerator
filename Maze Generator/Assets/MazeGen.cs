@@ -13,8 +13,8 @@ public class MazeGen : MonoBehaviour
     public bool BeAMazin = false;
     private float coolDown = .02f;
 
-    private int height = 20;
-    private int width = 20;
+    private int height = 30;
+    private int width = 30;
     private float timeStamp;
 
     void Start()
@@ -105,6 +105,11 @@ public class MazeGen : MonoBehaviour
                 currentCell.IsCurrent(true);
             }
             timeStamp = Time.time + coolDown;
+        }
+
+        if(neighbours.Count == 0 && stack.Count == 0)
+        {
+            BeAMazin = false;
         }
     }
 
