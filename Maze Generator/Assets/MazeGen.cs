@@ -84,6 +84,11 @@ public class MazeGen : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            BeAMazin = true;
+        }
+
         if (BeAMazin)
         {
             GenerateMaze();
