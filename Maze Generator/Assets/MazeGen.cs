@@ -9,6 +9,7 @@ public class MazeGen : MonoBehaviour
     public GameObject cellPrefab;
     public List<Cell> stack;
     public List<Cell> grid;
+    public List<Cell> path;
     public Transform cellParent;
     public List<Cell> neighbours = new List<Cell>();
     public Cell currentCell;
@@ -18,6 +19,7 @@ public class MazeGen : MonoBehaviour
     public GameObject finish;
     public TextMeshProUGUI instructionText;
     public bool BeAMazin = false;
+    public bool BeRetracin = false;
 
     private float coolDown = .01f;
 
@@ -112,16 +114,25 @@ public class MazeGen : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.P))
         {
+            path = new List<Cell>();
+
             while (targetCell.parent)
             {
-                targetCell.IsCurrent(true);
+                path.Add(targetCell);
                 targetCell = targetCell.parent;            
             }
+
+            BeRetracin = true;
         }
 
         if (BeAMazin)
         {
             GenerateMaze();
+        }
+
+        if (BeRetracin)
+        {
+            RetracePathFromParents();
         }
     }
 
@@ -159,6 +170,22 @@ public class MazeGen : MonoBehaviour
             GetNeighbour(0, 0).leftWall.enabled = false;
             //grid[cols * rows - 1]?
             GetNeighbour(gridCols - 1, gridRows - 1).rightWall.enabled = false;
+        }
+    }
+
+    public void RetracePathFromParents()
+    {
+        if(path.Count == 0)
+        {
+            BeRetracin = false;
+            return;
+        }
+
+        if (timeStamp < Time.time)
+        {
+            path[path.Count - 1].IsCurrent(true);
+            path.RemoveAt(path.Count - 1);
+            timeStamp = Time.time + coolDown;
         }
     }
 
