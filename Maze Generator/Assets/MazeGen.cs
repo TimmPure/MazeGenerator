@@ -4,6 +4,7 @@ using TMPro;
 
 public class MazeGen : MonoBehaviour
 {
+    //TODO: State machine: am I in the initial position, generating maze, pathfinding?
 
     public GameObject cellPrefab;
     public List<Cell> stack;
@@ -12,6 +13,7 @@ public class MazeGen : MonoBehaviour
     public List<Cell> neighbours = new List<Cell>();
     public Cell currentCell;
     public Cell startingCell;
+    public Cell targetCell;
     public GameObject start;
     public GameObject finish;
     public TextMeshProUGUI instructionText;
@@ -29,6 +31,7 @@ public class MazeGen : MonoBehaviour
         SpawnGrid();
 
         startingCell = grid[0];
+        targetCell = grid[gridCols * gridRows - 1];
         currentCell = startingCell;
         currentCell.IsVisited(true);
         currentCell.IsCurrent(true);
@@ -107,6 +110,15 @@ public class MazeGen : MonoBehaviour
             instructionText.gameObject.SetActive(false);
         }
 
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            while (targetCell.parent)
+            {
+                targetCell.IsCurrent(true);
+                targetCell = targetCell.parent;            
+            }
+        }
+
         if (BeAMazin)
         {
             GenerateMaze();
@@ -125,6 +137,7 @@ public class MazeGen : MonoBehaviour
                 stack.Add(currentCell);
                 Cell newCell = neighbours[Random.Range(0, neighbours.Count)];
                 RemoveWalls(currentCell, newCell);
+                newCell.parent = currentCell;
                 currentCell = newCell;
                 currentCell.IsCurrent(true);
             } else

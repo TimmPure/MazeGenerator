@@ -9,6 +9,8 @@ public class Cell : MonoBehaviour {
     public bool current = false;
     public bool startCell = false;
     public bool targetCell = false;
+    public Cell parent;
+
     public Material visitedMat;
     public Material currentMat;
     public Renderer meshRenderer;
