@@ -6,6 +6,7 @@ public class Cell : MonoBehaviour {
     public int x;
     public int y;
     public bool visited = false;
+    public bool flooded = false;
     public bool current = false;
     public bool startCell = false;
     public bool targetCell = false;

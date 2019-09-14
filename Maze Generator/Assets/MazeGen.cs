@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class MazeGen : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class MazeGen : MonoBehaviour
     public TextMeshProUGUI instructionText;
     public bool BeAMazin = false;
     public bool BeRetracin = false;
+    public bool BeFloodFillin = false;
 
     private float coolDown = .01f;
 
@@ -119,10 +121,16 @@ public class MazeGen : MonoBehaviour
             while (targetCell.parent)
             {
                 path.Add(targetCell);
-                targetCell = targetCell.parent;            
+                targetCell = targetCell.parent;
             }
 
             BeRetracin = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            BeFloodFillin = true;
+            StartCoroutine("FloodFill");
         }
 
         if (BeAMazin)
@@ -133,6 +141,11 @@ public class MazeGen : MonoBehaviour
         if (BeRetracin)
         {
             RetracePathFromParents();
+        }
+
+        if (BeFloodFillin)
+        {
+            FloodFill();
         }
     }
 
@@ -166,16 +179,12 @@ public class MazeGen : MonoBehaviour
             BeAMazin = false;
             start.SetActive(true);
             finish.SetActive(true);
-            //grid[0]?
-            GetNeighbour(0, 0).leftWall.enabled = false;
-            //grid[cols * rows - 1]?
-            GetNeighbour(gridCols - 1, gridRows - 1).rightWall.enabled = false;
         }
     }
 
     public void RetracePathFromParents()
     {
-        if(path.Count == 0)
+        if (path.Count == 0)
         {
             BeRetracin = false;
             return;
@@ -186,6 +195,60 @@ public class MazeGen : MonoBehaviour
             path[path.Count - 1].IsCurrent(true);
             path.RemoveAt(path.Count - 1);
             timeStamp = Time.time + coolDown;
+        }
+    }
+
+    IEnumerator FloodFill()
+    {
+        List<Cell> cellsToFlood = new List<Cell>
+        {
+            startingCell
+        };
+
+        while(BeFloodFillin)
+        {
+            //TODO: exit condition: targetCell is flooded
+            //TODO: set parent as the cell flooded from
+
+            //Using a temporary list of cells, because we cannot modify the collection being iterated over by the foreach loop
+            //inside of said loop.
+            List<Cell> tempList = new List<Cell>();
+
+            foreach (Cell c in cellsToFlood)
+            {
+                c.IsCurrent(true);
+                c.flooded = true;
+                if (c.topWall.enabled == false)
+                {
+                    Cell n = GetNeighbour(c.x, c.y + 1);
+                    if (!n.flooded) { tempList.Add(n); }
+                }
+                if (c.rightWall.enabled == false)
+                {
+                    Cell n = GetNeighbour(c.x + 1, c.y);
+                    if (!n.flooded) { tempList.Add(n); }
+                }
+                if (c.bottomWall.enabled == false)
+                {
+                    Cell n = GetNeighbour(c.x, c.y - 1);
+                    if (!n.flooded) { tempList.Add(n); }
+                }
+                if (c.leftWall.enabled == false)
+                {
+                    Cell n = GetNeighbour(c.x - 1, c.y);
+                    if (!n.flooded) { tempList.Add(n); }
+                }
+            }
+            cellsToFlood = tempList;
+
+            yield return new WaitForSeconds(0.05f);
+
+            if (cellsToFlood.Count == 0)
+            {
+                Debug.Log("cellsToFlood is empty; setting FloodFill to false");
+                BeFloodFillin = false;
+                StopCoroutine("FloodFill");
+            }
         }
     }
 
