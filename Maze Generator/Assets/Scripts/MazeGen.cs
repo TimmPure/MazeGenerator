@@ -111,7 +111,6 @@ public class MazeGen : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             BeAMazin = true;
-            instructionText.gameObject.SetActive(false);
         }
 
         if (Input.GetKeyDown(KeyCode.P))
@@ -153,6 +152,7 @@ public class MazeGen : MonoBehaviour
     {
         if (timeStamp < Time.time)
         {
+            instructionText.text = "Carving out the maze...";
             CheckNeighbours();
             currentCell.IsCurrent(false);
 
@@ -175,7 +175,7 @@ public class MazeGen : MonoBehaviour
 
         if (neighbours.Count == 0 && stack.Count == 0)
         {
-            //TODO: refactor into SpawnStartAndFinish()
+            instructionText.gameObject.SetActive(false);
             BeAMazin = false;
             start.SetActive(true);
             finish.SetActive(true);
@@ -210,8 +210,8 @@ public class MazeGen : MonoBehaviour
             //TODO: exit condition: targetCell is flooded
             //TODO: set parent as the cell flooded from
 
-            //Using a temporary list of cells, because we cannot modify the collection being iterated over by the foreach loop
-            //inside of said loop.
+            //Using a temporary list of cells, because we cannot modify the collection being iterated over
+            //by the foreach loop inside of said loop.
             List<Cell> tempList = new List<Cell>();
 
             foreach (Cell c in cellsToFlood)
