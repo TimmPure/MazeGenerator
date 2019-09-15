@@ -6,6 +6,7 @@ public class CanvasAlpha : MonoBehaviour
 {
     private CanvasGroup cg;
     private float alphaSin = 1;
+    public bool flickering = false;
 
     void Start()
     {
@@ -14,7 +15,14 @@ public class CanvasAlpha : MonoBehaviour
 
     void Update()
     {
-        cg.alpha = Mathf.Abs(Mathf.Sin(alphaSin));
-        alphaSin += 2* Time.deltaTime;
+        if (flickering)
+        {
+            cg.alpha = Mathf.Abs(Mathf.Sin(alphaSin));
+            alphaSin += 2 * Time.deltaTime;
+        }
+        else
+        {
+            cg.alpha = 1f;
+        }
     }
 }

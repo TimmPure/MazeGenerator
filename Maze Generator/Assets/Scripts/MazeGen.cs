@@ -22,6 +22,7 @@ public class MazeGen : MonoBehaviour
     public bool BeAMazin = false;
     public bool BeRetracin = false;
     public bool BeFloodFillin = false;
+    public CanvasAlpha canvasAlpha;
 
     private float coolDown = .01f;
 
@@ -32,6 +33,7 @@ public class MazeGen : MonoBehaviour
     void Start()
     {
         stack = new List<Cell>();
+        canvasAlpha = FindObjectOfType<CanvasAlpha>();
         SpawnGrid();
 
         startingCell = grid[0];
@@ -152,6 +154,7 @@ public class MazeGen : MonoBehaviour
     {
         if (timeStamp < Time.time)
         {
+            canvasAlpha.flickering = true;
             instructionText.text = "Carving out the maze...";
             CheckNeighbours();
             currentCell.IsCurrent(false);
@@ -175,6 +178,7 @@ public class MazeGen : MonoBehaviour
 
         if (neighbours.Count == 0 && stack.Count == 0)
         {
+            canvasAlpha.flickering = false;
             instructionText.gameObject.SetActive(false);
             BeAMazin = false;
             start.SetActive(true);
