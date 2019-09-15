@@ -2,6 +2,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class MazeGen : MonoBehaviour
 {
@@ -132,6 +133,11 @@ public class MazeGen : MonoBehaviour
         {
             BeFloodFillin = true;
             StartCoroutine("FloodFill");
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
         if (BeAMazin)
