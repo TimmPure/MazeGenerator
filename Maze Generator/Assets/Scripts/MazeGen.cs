@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class MazeGen : MonoBehaviour
 {
-    //TODO: State machine: am I in the initial position, generating maze, pathfinding?
+    //TODO: State machine: am I idle, generating maze, pathfinding?
 
     public GameObject cellPrefab;
     public List<Cell> stack;
@@ -114,6 +114,7 @@ public class MazeGen : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             BeAMazin = true;
+            StartCoroutine("GenerateMaze");
         }
 
         if (Input.GetKeyDown(KeyCode.P))
@@ -140,55 +141,56 @@ public class MazeGen : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
-        if (BeAMazin)
-        {
-            GenerateMaze();
-        }
-
         if (BeRetracin)
         {
             RetracePathFromParents();
         }
-
-        if (BeFloodFillin)
-        {
-            FloodFill();
-        }
     }
 
-    private void GenerateMaze()
-    {
-        if (timeStamp < Time.time)
-        {
-            canvasAlpha.flickering = true;
-            instructionText.text = "Carving out the maze...";
-            CheckNeighbours();
-            currentCell.IsCurrent(false);
+    IEnumerator GenerateMaze() {
+        //TODO: move UI/canvas handling elsewhere
+        canvasAlpha.flickering = true;
+        instructionText.text = "Carving out the maze...";
 
-            if (neighbours.Count != 0)
-            {
+        //TODO: initialize stack here, or clear if it already exists
+
+        //TODO: check if maze has already been generated; if so, regenerate/randomize?
+
+
+        while (BeAMazin) {
+            CheckNeighbours();              //Populates a List<Cell>, neighbours, with unvisited cells orthogonally adjacent to currentCell
+            currentCell.IsCurrent(false);   //Sets the cell material to Visited, and cell.visited = true
+            
+            //Exit condition
+            if (neighbours.Count == 0 && stack.Count == 0) {
+                Debug.Log("GenerateMaze Exit condition called");
+                canvasAlpha.flickering = false;
+                instructionText.gameObject.SetActive(false);
+                BeAMazin = false;
+                start.SetActive(true);
+                finish.SetActive(true);
+                StopCoroutine("GenerateMaze");
+                yield break;
+            }
+
+            if (neighbours.Count != 0) {
+                Debug.Log("GenerateMaze 'if' condition called");
                 stack.Add(currentCell);
                 Cell newCell = neighbours[Random.Range(0, neighbours.Count)];
                 RemoveWalls(currentCell, newCell);
                 newCell.parent = currentCell;
                 currentCell = newCell;
                 currentCell.IsCurrent(true);
-            } else
-            {
+            } else {
+                Debug.Log("GenerateMaze 'else' condition called");
                 currentCell = stack[stack.Count - 1];
                 stack.RemoveAt(stack.Count - 1);
                 currentCell.IsCurrent(true);
             }
-            timeStamp = Time.time + coolDown;
-        }
 
-        if (neighbours.Count == 0 && stack.Count == 0)
-        {
-            canvasAlpha.flickering = false;
-            instructionText.gameObject.SetActive(false);
-            BeAMazin = false;
-            start.SetActive(true);
-            finish.SetActive(true);
+            yield return new WaitForSeconds(coolDown);
+
+            Debug.Log("GenerateMaze after yield WaitForSeconds reached");
         }
     }
 
