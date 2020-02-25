@@ -11,7 +11,6 @@ public class MazeGen : MonoBehaviour
     public GameObject cellPrefab;
     public List<Cell> stack;
     public List<Cell> grid;
-    public List<Cell> path;
     public Transform cellParent;
     public List<Cell> neighbours = new List<Cell>();
     public Cell currentCell;
@@ -117,23 +116,16 @@ public class MazeGen : MonoBehaviour
             StartCoroutine("GenerateMaze");
         }
 
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            path = new List<Cell>();
-
-            while (targetCell.parent)
-            {
-                path.Add(targetCell);
-                targetCell = targetCell.parent;
-            }
-
-            BeRetracin = true;
-        }
-
         if (Input.GetKeyDown(KeyCode.F))
         {
             BeFloodFillin = true;
             StartCoroutine("FloodFill");
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            BeRetracin = true;
+            StartCoroutine("RetracePathFromParents");
         }
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -163,18 +155,16 @@ public class MazeGen : MonoBehaviour
             
             //Exit condition
             if (neighbours.Count == 0 && stack.Count == 0) {
-                Debug.Log("GenerateMaze Exit condition called");
                 canvasAlpha.flickering = false;
                 instructionText.gameObject.SetActive(false);
                 BeAMazin = false;
                 start.SetActive(true);
                 finish.SetActive(true);
                 StopCoroutine("GenerateMaze");
-                yield break;
+                break;
             }
 
             if (neighbours.Count != 0) {
-                Debug.Log("GenerateMaze 'if' condition called");
                 stack.Add(currentCell);
                 Cell newCell = neighbours[Random.Range(0, neighbours.Count)];
                 RemoveWalls(currentCell, newCell);
@@ -182,32 +172,41 @@ public class MazeGen : MonoBehaviour
                 currentCell = newCell;
                 currentCell.IsCurrent(true);
             } else {
-                Debug.Log("GenerateMaze 'else' condition called");
                 currentCell = stack[stack.Count - 1];
                 stack.RemoveAt(stack.Count - 1);
                 currentCell.IsCurrent(true);
             }
 
             yield return new WaitForSeconds(coolDown);
-
-            Debug.Log("GenerateMaze after yield WaitForSeconds reached");
         }
     }
 
-    public void RetracePathFromParents()
-    {
-        if (path.Count == 0)
-        {
-            BeRetracin = false;
-            return;
-        }
+    IEnumerator RetracePathFromParents() {
+        List<Cell> path = PopulatePath();
 
-        if (timeStamp < Time.time)
-        {
+        while (BeRetracin) {
+            if (path.Count == 0) {
+                BeRetracin = false;
+                StopCoroutine("RetracePathFromParent");
+                break;
+            }
+
             path[path.Count - 1].IsCurrent(true);
             path.RemoveAt(path.Count - 1);
-            timeStamp = Time.time + coolDown;
+            yield return new WaitForSeconds(coolDown);
         }
+    }
+
+    private List<Cell> PopulatePath() {
+        List<Cell> path = new List<Cell>();
+
+        while (targetCell.parent) {
+            path.Add(targetCell);
+            targetCell = targetCell.parent;
+        }
+
+        path.Add(targetCell);
+        return path;
     }
 
     IEnumerator FloodFill()
