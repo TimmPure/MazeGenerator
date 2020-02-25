@@ -132,11 +132,6 @@ public class MazeGen : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
-
-        if (BeRetracin)
-        {
-            RetracePathFromParents();
-        }
     }
 
     IEnumerator GenerateMaze() {
