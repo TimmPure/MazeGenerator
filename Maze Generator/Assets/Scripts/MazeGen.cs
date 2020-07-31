@@ -110,6 +110,9 @@ public class MazeGen : MonoBehaviour
     }
     private void Update()
     {
+        //TODO: refactor coroutines to not be referenced by string
+        //StartCoroutine returns a reference to the Coroutine; use that to cache it for StopCoroutine?
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             BeAMazin = true;
